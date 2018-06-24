@@ -20,12 +20,12 @@
    (respond/with [:status/not-found (when message {:message message})])))
 
 (defroutes ^:private base
-  #_(context "/auth" []
-    auth/auth)
+  (context "/auth" []
+     auth/auth)
   (context "/api" []
     (GET "/health" [] (respond/with [:status/ok {:a :ok}]))
-    #_(ANY "/*" {:keys [user]} (when-not user (respond/with [:status/unauthorized])))
-    #_user/user)
+    (ANY "/*" {:keys [user]} (when-not user (respond/with [:status/unauthorized])))
+    user/user)
   (context "/" []
     (route/resources "/")
     (GET "/*" [] (response/resource-response "index.html" {:root "public"}))

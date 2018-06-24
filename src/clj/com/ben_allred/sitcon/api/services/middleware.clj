@@ -3,7 +3,8 @@
             [com.ben-allred.sitcon.api.services.jwt :as jwt]
             [clojure.string :as string]
             [com.ben-allred.sitcon.api.services.content :as content]
-            [com.ben-allred.sitcon.api.utils.uuids :as uuids])
+            [com.ben-allred.sitcon.api.utils.uuids :as uuids]
+            [com.ben-allred.sitcon.api.utils.maps :as maps])
   (:import [java.util Date]))
 
 (defn ^:private api? [{:keys [uri websocket?]}]
@@ -39,7 +40,7 @@
                        (:value)
                        (jwt/decode)
                        (:data)
-                       (update :id uuids/->uuid))]
+                       (maps/update-maybe :id uuids/->uuid))]
       (cond-> request
         user (assoc :user user)
         :always (handler)))))

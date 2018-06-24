@@ -2,7 +2,7 @@
   :description "Situation Conversation"
   :license {:name "Eclipse Public License"
             :url  "http://www.eclipse.org/legal/epl-v10.html"}
-  :main com.ben-allred.sitcon.api.server
+  :main "com.ben-allred.sitcon.api.server/main"
   :aot [com.ben-allred.sitcon.api.server]
   :min-lein-version "2.6.1"
 
@@ -47,7 +47,7 @@
            "reload" ["npm" "run" "reload"]}
 
   :profiles {:dev     {:dependencies  []
-                       :main          com.ben-allred.sitcon.api.server/-dev
+                       :main          "com.ben-allred.sitcon.api.server/-dev"
                        :source-paths  ["src/clj" "dev"]
                        :plugins       []
                        :clean-targets ^{:protect false :replace true} ["resources/public/js"
