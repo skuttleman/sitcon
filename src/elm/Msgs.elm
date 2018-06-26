@@ -5,5 +5,5 @@ import Navigation
 
 type Msg
     = NoOp
-    | ChangeLocation
+    | ChangeLocation String
     | OnLocationChanged Navigation.Location

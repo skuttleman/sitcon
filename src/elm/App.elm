@@ -7,7 +7,7 @@ import Navigation
 import Router exposing (router)
 import SitCon.Yang.State as YangState
 import SitCon.Yin.State as YinState
-import State
+import SitCon.Global.State as GlobalState
 import Utils exposing (..)
 
 
@@ -15,7 +15,7 @@ init : Navigation.Location -> ( AppModel, Cmd Msg )
 init location =
     let
         ( global, globalCmd ) =
-            State.init location
+            GlobalState.init location
 
         ( yang, yangCmd ) =
             YangState.init global.page
@@ -40,7 +40,7 @@ update : Msg -> AppModel -> ( AppModel, Cmd Msg )
 update msg model =
     let
         ( global, globalCmd ) =
-            State.update msg model.global
+            GlobalState.update msg model.global
 
         ( yang, yangCmd ) =
             YangState.update msg model.yang
@@ -58,7 +58,7 @@ update msg model =
 
 subs : AppModel -> Sub Msg
 subs model =
-    [ .global >> State.subs, .yang >> YangState.subs, .yin >> YinState.subs ]
+    [ .global >> GlobalState.subs, .yang >> YangState.subs, .yin >> YinState.subs ]
         |> List.map (call model)
         |> Sub.batch
 
