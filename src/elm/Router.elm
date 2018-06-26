@@ -36,4 +36,12 @@ notFound global =
 
 link : String -> List (Html.Attribute Msg) -> List (Html Msg) -> Html Msg
 link url attributes children =
-    a (href url :: attributes) children
+    a (href url :: prevent (ChangeLocation url) :: attributes) children
+
+
+prevent : Msg -> Html.Attribute Msg
+prevent msg =
+    onWithOptions
+        "click"
+        { stopPropagation = True, preventDefault = True }
+        (Decode.succeed msg)

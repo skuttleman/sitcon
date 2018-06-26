@@ -1,10 +1,10 @@
 module App exposing (..)
 
-import Html exposing (Html, button, div, text)
+import Html exposing (Html, button, div, header, text)
 import Models exposing (AppModel)
 import Msgs exposing (..)
 import Navigation
-import Router exposing (router)
+import Router exposing (link, router)
 import SitCon.Yang.State as YangState
 import SitCon.Yin.State as YinState
 import SitCon.Global.State as GlobalState
@@ -33,7 +33,14 @@ init location =
 
 view : AppModel -> Html Msg
 view model =
-    router model.global.page model
+    div []
+        [ header []
+            [ link "/" [] [ text "to home" ]
+            , link "/yin" [] [ text "to yin" ]
+            , link "/yang" [] [ text "to yang" ]
+            ]
+        , router model.global.page model
+        ]
 
 
 update : Msg -> AppModel -> ( AppModel, Cmd Msg )
