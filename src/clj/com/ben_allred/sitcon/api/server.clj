@@ -10,9 +10,11 @@
             [com.ben-allred.sitcon.api.utils.logging :as log]
             [compojure.handler :refer [site]]
             [compojure.route :as route]
+            [hawk.core :as hawk]
             [immutant.web :as web]
             [ring.middleware.reload :refer [wrap-reload]]
-            [ring.util.response :as response]))
+            [ring.util.response :as response]
+            [clojure.string :as string]))
 
 (defn ^:private not-found
   ([] (not-found nil))
@@ -21,7 +23,7 @@
 
 (defroutes ^:private base
   (context "/auth" []
-     auth/auth)
+    auth/auth)
   (context "/api" []
     (GET "/health" [] (respond/with [:status/ok {:a :ok}]))
     (ANY "/*" {:keys [user]} (when-not user (respond/with [:status/unauthorized])))
@@ -55,10 +57,21 @@
 (defn -main [& {:as env}]
   [(partial web/stop (run app env))])
 
+(defn ^:private init! []
+  ;; because fuck webpack
+  (let [reload-file "src/elm/App.elm"]
+    (hawk/watch!
+      [{:paths   ["src/elm"]
+        :filter  hawk/file?
+        :handler (fn [_ {:keys [file]}]
+                   (when-not (string/ends-with? (.getAbsolutePath file) "src/elm/App.elm")
+                     (spit reload-file (str (slurp reload-file) "\n"))))}])))
+
 (defn -dev [& {:as env}]
   (let [server (run #'app env)
         nrepl-port (server-port env :nrepl-port 7000)
         repl-server (nrepl/start-server :port nrepl-port)]
+    (init!)
     (println "Server is running with #'wrap-reload")
     (println "REPL is listening on port" nrepl-port)
     (alter-var-root #'-dev-server (constantly server))
