@@ -1,17 +1,37 @@
 module SitCon.Global.Models exposing (..)
 
 import Navigation
+import RemoteData exposing (WebData)
+import Uuid
 
 
 type alias GlobalModel =
-    { page : Page }
+    { page : Page
+    , userDetails : WebData UserModel
+    }
 
 
 type Page
     = HomePage
+    | LoginPage
     | YinPage
     | YangPage
     | NotFound
+
+
+type alias UserModel =
+    { id : Uuid.Uuid
+    , firstName : String
+    , lastName : String
+    , email : String
+    }
+
+
+type alias UserForm =
+    { firstName : String
+    , lastName : String
+    , email : String
+    }
 
 
 pathToPage : String -> Page
@@ -19,6 +39,9 @@ pathToPage path =
     case path of
         "/" ->
             HomePage
+
+        "/login" ->
+            LoginPage
 
         "/yin" ->
             YinPage
@@ -35,6 +58,9 @@ pageToPath page =
     case page of
         HomePage ->
             "/"
+
+        LoginPage ->
+            "/login"
 
         YinPage ->
             "/yin"

@@ -3,7 +3,8 @@
             [ring.util.response :as resp]
             [com.ben-allred.sitcon.api.services.jwt :as jwt]
             [com.ben-allred.sitcon.api.services.env :as env]
-            [com.ben-allred.sitcon.api.utils.logging :as log]))
+            [com.ben-allred.sitcon.api.utils.logging :as log]
+            [com.ben-allred.sitcon.api.utils.uuids :as uuids]))
 
 (defn ^:private token->cookie [resp cookie value]
   (->> value
@@ -25,5 +26,5 @@
     (logout)))
 
 (defroutes auth
-  (GET "/login" {:keys [params]} (login params))
+  (GET "/login" {:keys [params]} (login (assoc params :id (uuids/random))))
   (GET "/logout" [] (logout)))

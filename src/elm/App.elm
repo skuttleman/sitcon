@@ -5,9 +5,10 @@ import Models exposing (AppModel)
 import Msgs exposing (..)
 import Navigation
 import Router exposing (link, router)
+import SitCon.Global.State as GlobalState
+import SitCon.Login.State as LoginState
 import SitCon.Yang.State as YangState
 import SitCon.Yin.State as YinState
-import SitCon.Global.State as GlobalState
 import Utils exposing (..)
 
 
@@ -16,6 +17,9 @@ init location =
     let
         ( global, globalCmd ) =
             GlobalState.init location
+
+        ( login, loginCmd ) =
+            LoginState.init location
 
         ( yang, yangCmd ) =
             YangState.init global.page
@@ -26,8 +30,9 @@ init location =
         ( { global = global
           , yang = yang
           , yin = yin
+          , login = login
           }
-        , Cmd.batch [ globalCmd, yangCmd, yinCmd ]
+        , Cmd.batch [ globalCmd, loginCmd, yangCmd, yinCmd ]
         )
 
 
@@ -36,6 +41,7 @@ view model =
     div []
         [ header []
             [ link "/" [] [ text "to home" ]
+            , link "/login" [] [ text "sign in" ]
             , link "/yin" [] [ text "to yin" ]
             , link "/yang" [] [ text "to yang" ]
             ]
@@ -49,6 +55,9 @@ update msg model =
         ( global, globalCmd ) =
             GlobalState.update msg model.global
 
+        ( login, loginCmd ) =
+            LoginState.update msg model.login
+
         ( yang, yangCmd ) =
             YangState.update msg model.yang
 
@@ -56,10 +65,11 @@ update msg model =
             YinState.update msg model.yin
     in
         ( { global = global
+          , login = login
           , yang = yang
           , yin = yin
           }
-        , Cmd.batch [ globalCmd, yangCmd, yinCmd ]
+        , Cmd.batch [ globalCmd, loginCmd, yangCmd, yinCmd ]
         )
 
 

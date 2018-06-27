@@ -1,7 +1,8 @@
 (ns com.ben-allred.sitcon.api.services.jwt
   (:require [com.ben-allred.sitcon.api.services.env :as env]
             [clj-jwt.core :as clj-jwt]
-            [clj-time.core :as time]))
+            [clj-time.core :as time]
+            [com.ben-allred.sitcon.api.utils.maps :as maps]))
 
 
 (def ^:private jwt-secret (env/get :jwt-secret))
@@ -20,8 +21,9 @@
   ([payload] (encode payload 30))
   ([payload days-to-expire]
    (let [now (time/now)]
-     (-> {:data payload :iat now}
-         (assoc :exp (time/plus now (time/days days-to-expire)))
+     (-> {:iat  now
+          :data (maps/update-all payload #(if (uuid? %) (str %) %))
+          :exp  (time/plus now (time/days days-to-expire))}
          (clj-jwt/jwt)
          (clj-jwt/sign :HS256 jwt-secret)
          (clj-jwt/to-str)))))
