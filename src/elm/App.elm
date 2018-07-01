@@ -1,15 +1,19 @@
 module App exposing (..)
 
-import Html exposing (Html, button, div, header, text)
+import Html exposing (Html, a, button, div, header, text)
+import Html.Attributes exposing (href)
 import Models exposing (AppModel)
 import Msgs exposing (..)
 import Navigation
-import Router exposing (link, router)
+import RemoteData
+import Router exposing (router)
+import Shared.Utils exposing (..)
+import Shared.Views exposing (..)
 import SitCon.Global.State as GlobalState
 import SitCon.Login.State as LoginState
+import SitCon.Login.View as LoginView
 import SitCon.Yang.State as YangState
 import SitCon.Yin.State as YinState
-import Utils exposing (..)
 
 
 init : Navigation.Location -> ( AppModel, Cmd Msg )
@@ -38,15 +42,28 @@ init location =
 
 view : AppModel -> Html Msg
 view model =
-    div []
-        [ header []
-            [ link "/" [] [ text "to home" ]
-            , link "/login" [] [ text "sign in" ]
-            , link "/yin" [] [ text "to yin" ]
-            , link "/yang" [] [ text "to yang" ]
-            ]
-        , router model.global.page model
-        ]
+    case model.global.userDetails of
+        RemoteData.Success user ->
+            div []
+                [ header []
+                    [ text "[ "
+                    , link "/" [] [ text "to home" ]
+                    , text " ] [ "
+                    , link "/yin" [] [ text "to yin" ]
+                    , text " ] [ "
+                    , link "/yang" [] [ text "to yang" ]
+                    , text " ] [ "
+                    , a [ href "/auth/logout" ] [ text "log out" ]
+                    , text " ]"
+                    ]
+                , router model.global.page model
+                ]
+
+        RemoteData.Failure _ ->
+            LoginView.root model.global model.login
+
+        _ ->
+            spinner
 
 
 update : Msg -> AppModel -> ( AppModel, Cmd Msg )

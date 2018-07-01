@@ -7,4 +7,4 @@ import Msgs exposing (..)
 
 root : GlobalModel -> Html Msg
 root global =
-    div [] [ text "home" ]
+    div [] [ text "home", text (toString global.userDetails) ]

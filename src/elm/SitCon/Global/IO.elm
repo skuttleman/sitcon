@@ -1,13 +1,10 @@
 module SitCon.Global.IO exposing (..)
 
-import Http
 import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (decode, requiredAt)
 import Msgs exposing (..)
-import Models exposing (..)
-import RemoteData
 import SitCon.Global.Models as GlobalModels
-import Utils exposing (..)
+import Shared.Utils exposing (..)
 import Uuid
 
 
