@@ -9,6 +9,7 @@
   :dependencies [
                  [clj-jwt "0.1.1"]
                  [clj-time "0.6.0"]
+                 [c3p0/c3p0 "0.9.1.2"]
 
                  [com.ben-allred/collaj "0.8.0"]
                  [com.ben-allred/formation "0.4.1"]
@@ -17,13 +18,18 @@
                  [compojure "1.6.0"]
                  [environ "1.1.0"]
                  [hawk "0.2.11"]
+                 [honeysql "0.9.2"]
                  [io.nervous/kvlt "0.1.4"]
                  [metosin/jsonista "0.1.1"]
+                 [mysql/mysql-connector-java "8.0.11"]
                  [org.clojure/clojure "1.9.0"]
                  [org.clojure/core.async "0.3.465"]
                  [org.clojure/data.json "0.2.6"]
+                 [org.clojure/java.jdbc "0.7.7"]
                  [org.clojure/tools.nrepl "0.2.12"]
                  [org.immutant/immutant "2.1.10"]
+                 [org.postgresql/postgresql "9.4-1206-jdbc41"]
+                 [ragtime "0.7.2"]
                  [ring/ring-core "1.3.2"]
                  [ring/ring-defaults "0.2.1"]
                  [ring/ring-devel "1.6.3"]
@@ -37,6 +43,8 @@
   :jar-name "sitcon.jar"
   :uberjar-name "sitcon-standalone.jar"
   :source-paths ["src/clj"]
+
+  :aliases {"migrations" ["run" "-m" "com.ben-allred.sitcon.api.services.db.migrations/run"]}
 
   :sass {:src              "src/scss"
          :output-directory "resources/public/css/"}
