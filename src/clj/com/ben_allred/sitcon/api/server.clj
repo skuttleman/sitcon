@@ -64,8 +64,12 @@
       [{:paths   ["src/elm"]
         :filter  hawk/file?
         :handler (fn [_ {:keys [file]}]
-                   (when-not (string/ends-with? (.getAbsolutePath file) "src/elm/App.elm")
-                     (spit reload-file (str (slurp reload-file) "\n"))))}])))
+                   (when-not (string/ends-with? (.getAbsolutePath file) reload-file)
+                     (let [src (slurp reload-file)]
+                       (spit reload-file
+                             (if (string/ends-with? src "\n\n")
+                               (subs src 0 (dec (count src)))
+                               (str src "\n"))))))}])))
 
 (defn -dev [& {:as env}]
   (let [server (run #'app env)
