@@ -9,6 +9,7 @@
   :dependencies [
                  [clj-jwt "0.1.1"]
                  [clj-time "0.6.0"]
+                 [clojure.jdbc/clojure.jdbc-c3p0 "0.3.3"]
                  [c3p0/c3p0 "0.9.1.2"]
 
                  [com.ben-allred/collaj "0.8.0"]

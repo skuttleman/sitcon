@@ -11,8 +11,9 @@ init : Navigation.Location -> ( GlobalModel, Cmd Msg )
 init location =
     ( { page = locationToPage location
       , userDetails = RemoteData.Loading
+      , emoji = RemoteData.Loading
       }
-    , GlobalIO.fetchUserDetails
+    , Cmd.batch [ GlobalIO.fetchUserDetails, GlobalIO.fetchEmoji ]
     )
 
 
@@ -44,6 +45,9 @@ update msg model =
                     ( { model | userDetails = userResponse, page = LoginPage }
                     , Navigation.newUrl "/login"
                     )
+
+        OnEmojiReceive emoji ->
+            ( { model | emoji = emoji }, Cmd.none )
 
         _ ->
             ( model, Cmd.none )

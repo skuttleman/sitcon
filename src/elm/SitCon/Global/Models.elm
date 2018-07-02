@@ -8,6 +8,7 @@ import Uuid
 type alias GlobalModel =
     { page : Page
     , userDetails : WebData UserModel
+    , emoji : WebData (List Emoji)
     }
 
 
@@ -31,6 +32,13 @@ type alias UserForm =
     { firstName : String
     , lastName : String
     , email : String
+    }
+
+
+type alias Emoji =
+    { id : Uuid.Uuid
+    , utfString : String
+    , handles : List String
     }
 
 

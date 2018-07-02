@@ -11,4 +11,5 @@ type Msg
     | ChangeLocation String
     | OnLocationChanged Navigation.Location
     | OnUserDetailsReceive (WebData GlobalModels.UserModel)
+    | OnEmojiReceive (WebData (List GlobalModels.Emoji))
     | ChangeUserForm GlobalModels.UserForm
