@@ -22,6 +22,8 @@ DROP TABLE user_workspaces;
 
 DROP TABLE workspaces;
 
+DROP INDEX user_email;
+
 DROP TABLE users;
 
 DROP TYPE user_role;

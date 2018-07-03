@@ -16,12 +16,23 @@
                           (env/get :db-port)
                           (env/get :db-name))}))
 
+(defn ^:private sql-format [query]
+  (sql/format query :quoting :ansi))
+
 (defn ^:private exec* [db query]
-  (let [sql (sql/format query)]
+  (let [sql (sql-format query)]
     (cond
       (:select query) (jdbc/query db sql)
       (:insert-into query) (jdbc/execute! db sql {:return-keys true})
       :else (log/spy sql))))
+
+(defn ^:private remove-namespaces [val]
+  (cond
+    (map? val) (->> val
+                    (map (fn [[k v]] [(keyword (name k)) (remove-namespaces v)]))
+                    (into {}))
+    (coll? val) (map remove-namespaces val)
+    :else val))
 
 (defn collapse [query-fn & query-fns]
   (reduce (fn [[queries] [queries' f']]
@@ -30,18 +41,19 @@
           query-fns))
 
 (defn to-sqls [[queries]]
-  (map sql/format queries))
+  (map sql-format queries))
 
 (defn exec! [[queries f]]
-  (jdbc/db-transaction*
-    db-spec
-    (fn [db]
-      (when (seq queries)
-        (loop [[query & more] queries]
-          (if (seq more)
-            (do (exec* db query)
-                (recur more))
-            (f (exec* db query))))))))
+  (remove-namespaces
+    (jdbc/db-transaction*
+      db-spec
+      (fn [db]
+        (when (seq queries)
+          (loop [[query & more] queries]
+            (if (seq more)
+              (do (exec* db query)
+                  (recur more))
+              (f (exec* db query)))))))))
 
 (defn single [[query f]]
   [[query] f])

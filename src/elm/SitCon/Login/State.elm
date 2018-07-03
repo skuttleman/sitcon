@@ -7,12 +7,7 @@ import SitCon.Login.Models as LoginModels exposing (LoginModel)
 
 init : Navigation.Location -> ( LoginModel, Cmd Msg )
 init _ =
-    ( { userForm =
-            { firstName = ""
-            , lastName = ""
-            , email = ""
-            }
-      }
+    ( { userForm = { email = "" } }
     , Cmd.none
     )
 

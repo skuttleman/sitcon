@@ -29,8 +29,6 @@ userDetailsDecoder : Decode.Decoder GlobalModels.UserModel
 userDetailsDecoder =
     decode GlobalModels.UserModel
         |> requiredAt [ "user", "id" ] Uuid.decoder
-        |> requiredAt [ "user", "firstName" ] Decode.string
-        |> requiredAt [ "user", "lastName" ] Decode.string
         |> requiredAt [ "user", "email" ] Decode.string
 
 

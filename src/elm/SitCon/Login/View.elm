@@ -11,8 +11,6 @@ import Msgs exposing (..)
 root : GlobalModel -> LoginModel -> Html Msg
 root _ { userForm } =
     form [ onSubmit <| Login userForm ]
-        [ input [ onInput (\s -> ChangeUserForm { userForm | firstName = s }) ] []
-        , input [ onInput (\s -> ChangeUserForm { userForm | lastName = s }) ] []
-        , input [ onInput (\s -> ChangeUserForm { userForm | email = s }) ] []
+        [ input [ onInput (\s -> ChangeUserForm { userForm | email = s }) ] []
         , button [ type_ "submit" ] [ text "Login" ]
         ]

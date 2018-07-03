@@ -23,8 +23,8 @@ subs _ =
 
 
 loginUrl : UserForm -> String
-loginUrl { firstName, lastName, email } =
-    "/auth/login?firstName=" ++ firstName ++ "&lastName=" ++ lastName ++ "&email=" ++ email
+loginUrl { email } =
+    "/auth/login?email=" ++ email
 
 
 update : Msg -> GlobalModel -> ( GlobalModel, Cmd Msg )

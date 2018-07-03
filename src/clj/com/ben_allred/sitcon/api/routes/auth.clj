@@ -4,7 +4,7 @@
             [com.ben-allred.sitcon.api.services.jwt :as jwt]
             [com.ben-allred.sitcon.api.services.env :as env]
             [com.ben-allred.sitcon.api.utils.logging :as log]
-            [com.ben-allred.sitcon.api.utils.uuids :as uuids]))
+            [com.ben-allred.sitcon.api.services.db.models :as models]))
 
 (defn ^:private token->cookie [resp cookie value]
   (->> value
@@ -26,5 +26,9 @@
     (logout)))
 
 (defroutes auth
-  (GET "/login" {:keys [params]} (login (assoc params :id (uuids/random))))
+  (GET "/login" {:keys [params]}
+    (-> params
+        (:email)
+        (models/select-user-by-email)
+        (login)))
   (GET "/logout" [] (logout)))

@@ -10,5 +10,4 @@ root global =
     div []
         [ text "home"
         , text (toString global.userDetails)
-        , text (toString global.emoji)
         ]

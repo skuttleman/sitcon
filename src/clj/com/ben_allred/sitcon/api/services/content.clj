@@ -33,4 +33,4 @@
     (= "" (:body data)) (dissoc :body)
     :always (->
               (maps/update-maybe :body when-not-string json/stringify)
-              (with-headers header-keys "application/json"))))
+              (with-headers header-keys "application/json; charset=utf-16"))))

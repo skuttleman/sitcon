@@ -13,6 +13,8 @@ CREATE TABLE users (
     created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
+CREATE UNIQUE INDEX user_email ON users (email);
+
 CREATE TABLE workspaces (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v1mc(),
     handle VARCHAR(20) UNIQUE NOT NULL CHECK (handle ~ '^[a-z\-\+_0-9\.]+$'),

@@ -22,17 +22,12 @@ type Page
 
 type alias UserModel =
     { id : Uuid.Uuid
-    , firstName : String
-    , lastName : String
     , email : String
     }
 
 
 type alias UserForm =
-    { firstName : String
-    , lastName : String
-    , email : String
-    }
+    { email : String }
 
 
 type alias Emoji =
