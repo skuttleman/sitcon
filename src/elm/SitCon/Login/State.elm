@@ -20,7 +20,7 @@ subs _ =
 update : Msg -> LoginModel -> ( LoginModel, Cmd Msg )
 update msg model =
     case msg of
-        ChangeUserForm userForm ->
+        UserFormChange userForm ->
             ( { model | userForm = userForm }, Cmd.none )
 
         _ ->

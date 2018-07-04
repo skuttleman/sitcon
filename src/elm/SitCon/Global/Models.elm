@@ -2,11 +2,12 @@ module SitCon.Global.Models exposing (..)
 
 import Navigation
 import RemoteData exposing (WebData)
+import RouteParser exposing (..)
 import Uuid
 
 
 type alias GlobalModel =
-    { page : Page
+    { page : Maybe Page
     , userDetails : WebData UserModel
     , emoji : WebData (List Emoji)
     }
@@ -15,9 +16,8 @@ type alias GlobalModel =
 type Page
     = HomePage
     | LoginPage
-    | YinPage
-    | YangPage
-    | NotFound
+    | ChannelPage String String
+    | ConversationPage String String
 
 
 type alias UserModel =
@@ -37,44 +37,20 @@ type alias Emoji =
     }
 
 
-pathToPage : String -> Page
-pathToPage path =
-    case path of
-        "/" ->
-            HomePage
-
-        "/login" ->
-            LoginPage
-
-        "/yin" ->
-            YinPage
-
-        "/yang" ->
-            YangPage
-
-        _ ->
-            NotFound
+matchers : List (Matcher Page)
+matchers =
+    [ static HomePage "/"
+    , static LoginPage "/login"
+    , dyn2 ChannelPage "/workspaces/" string "/channels/" string ""
+    , dyn2 ConversationPage "/workspaces/" string "/conversations/" string ""
+    ]
 
 
-pageToPath : Page -> String
-pageToPath page =
-    case page of
-        HomePage ->
-            "/"
-
-        LoginPage ->
-            "/login"
-
-        YinPage ->
-            "/yin"
-
-        YangPage ->
-            "/yang"
-
-        _ ->
-            "/notfound"
+pathToPage : String -> Maybe Page
+pathToPage =
+    match matchers
 
 
-locationToPage : Navigation.Location -> Page
+locationToPage : Navigation.Location -> Maybe Page
 locationToPage =
     .pathname >> pathToPage

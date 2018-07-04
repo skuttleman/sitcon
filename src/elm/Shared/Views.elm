@@ -18,4 +18,4 @@ spinner =
 
 link : String -> List (Html.Attribute Msg) -> List (Html Msg) -> Html Msg
 link url attributes children =
-    a (href url :: prevent (ChangeLocation url) :: attributes) children
+    a (href url :: prevent (LocationChange url) :: attributes) children

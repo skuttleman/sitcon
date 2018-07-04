@@ -53,7 +53,7 @@
   :cooper {"sass"    ["lein" "sass" "auto"]
            "server"  ["lein" "run"]
            "webpack" ["npm" "start"]
-           "reload" ["npm" "run" "reload"]}
+           "reload"  ["npm" "run" "reload"]}
 
   :profiles {:dev     {:dependencies  []
                        :main          "com.ben-allred.sitcon.api.server/-dev"

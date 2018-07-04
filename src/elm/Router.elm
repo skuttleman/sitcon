@@ -1,4 +1,4 @@
-module Router exposing (..)
+module Router exposing (router)
 
 import Html exposing (Html, a, div, text)
 import Models exposing (..)
@@ -7,25 +7,24 @@ import Shared.Views exposing (..)
 import SitCon.Global.Models exposing (..)
 import SitCon.Global.View as GlobalView
 import SitCon.Login.View as LoginView
-import SitCon.Yang.View as YangView
-import SitCon.Yin.View as YinView
+import SitCon.Channel.View as ChannelView
 import Utils exposing (..)
 
 
-router : Page -> AppModel -> Html Msg
+router : Maybe Page -> AppModel -> Html Msg
 router page =
     case page of
-        HomePage ->
+        Just HomePage ->
             .global >> GlobalView.root
 
-        LoginPage ->
+        Just LoginPage ->
             withGlobal LoginView.root .login
 
-        YinPage ->
-            withGlobal YinView.root .yin
+        Just (ChannelPage workspace channel) ->
+            withGlobal ChannelView.root .channel
 
-        YangPage ->
-            withGlobal YangView.root .yang
+        Just (ConversationPage workspace conversation) ->
+            always notFound
 
-        _ ->
+        Nothing ->
             always notFound

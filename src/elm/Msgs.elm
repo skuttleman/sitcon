@@ -7,9 +7,9 @@ import SitCon.Global.Models as GlobalModels
 
 type Msg
     = NoOp
+    | EmojiOnReceive (WebData (List GlobalModels.Emoji))
     | Login GlobalModels.UserForm
-    | ChangeLocation String
-    | OnLocationChanged Navigation.Location
-    | OnUserDetailsReceive (WebData GlobalModels.UserModel)
-    | OnEmojiReceive (WebData (List GlobalModels.Emoji))
-    | ChangeUserForm GlobalModels.UserForm
+    | LocationChange String
+    | LocationOnChanged Navigation.Location
+    | UserDetailsOnReceive (WebData GlobalModels.UserModel)
+    | UserFormChange GlobalModels.UserForm

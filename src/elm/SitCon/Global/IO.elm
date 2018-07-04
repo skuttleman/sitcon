@@ -13,12 +13,12 @@ import Uuid
 
 fetchUserDetails : Cmd Msg
 fetchUserDetails =
-    fetch "/api/user/details" userDetailsDecoder OnUserDetailsReceive
+    fetch "/api/user/details" userDetailsDecoder UserDetailsOnReceive
 
 
 fetchEmoji : Cmd Msg
 fetchEmoji =
-    fetch "/api/emoji" emojiListDecoder OnEmojiReceive
+    fetch "/api/emoji" emojiListDecoder EmojiOnReceive
 
 
 

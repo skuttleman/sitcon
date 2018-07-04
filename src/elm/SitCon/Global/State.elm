@@ -30,23 +30,23 @@ loginUrl { email } =
 update : Msg -> GlobalModel -> ( GlobalModel, Cmd Msg )
 update msg model =
     case msg of
-        ChangeLocation path ->
+        LocationChange path ->
             ( { model | page = pathToPage path }, Navigation.newUrl path )
 
         Login userForm ->
             ( model, Navigation.load <| loginUrl userForm )
 
-        OnUserDetailsReceive userResponse ->
+        UserDetailsOnReceive userResponse ->
             case userResponse of
                 RemoteData.Success user ->
                     ( { model | userDetails = userResponse }, Cmd.none )
 
                 _ ->
-                    ( { model | userDetails = userResponse, page = LoginPage }
+                    ( { model | userDetails = userResponse, page = Just LoginPage }
                     , Navigation.newUrl "/login"
                     )
 
-        OnEmojiReceive emoji ->
+        EmojiOnReceive emoji ->
             ( { model | emoji = emoji }, Cmd.none )
 
         _ ->
