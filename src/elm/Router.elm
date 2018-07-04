@@ -7,7 +7,7 @@ import Shared.Views exposing (..)
 import SitCon.Global.Models exposing (..)
 import SitCon.Global.View as GlobalView
 import SitCon.Login.View as LoginView
-import SitCon.Channel.View as ChannelView
+import SitCon.Workspace.View as WorkspaceView
 import Utils exposing (..)
 
 
@@ -21,10 +21,13 @@ router page =
             withGlobal LoginView.root .login
 
         Just (ChannelPage workspace channel) ->
-            withGlobal ChannelView.root .channel
+            always notFound
 
         Just (ConversationPage workspace conversation) ->
             always notFound
+
+        Just (WorkspacePage workspace) ->
+            withGlobal WorkspaceView.root .workspace
 
         Nothing ->
             always notFound

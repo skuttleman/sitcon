@@ -1,8 +1,6 @@
 (ns com.ben-allred.sitcon.api.repositories.workspaces
   (:require [com.ben-allred.sitcon.api.services.db.entities :as entities]))
 
-(def workspace-spec)
-
 (defn select-for-user [user-id]
   (-> entities/workspaces
       (entities/with-alias :w)

@@ -5,6 +5,7 @@
             [com.ben-allred.sitcon.api.routes.auth :as auth]
             [com.ben-allred.sitcon.api.routes.user :as user]
             [com.ben-allred.sitcon.api.routes.emoji :as emoji]
+            [com.ben-allred.sitcon.api.routes.workspaces :as workspaces]
             [com.ben-allred.sitcon.api.services.middleware :as middleware]
             [com.ben-allred.sitcon.api.utils.respond :as respond]
             [com.ben-allred.sitcon.api.services.env :as env]
@@ -29,7 +30,8 @@
     (GET "/health" [] (respond/with [:status/ok {:a :ok}]))
     (ANY "/*" {:keys [user]} (when-not user (respond/with [:status/unauthorized])))
     user/user
-    emoji/emoji)
+    emoji/emoji
+    workspaces/workspaces)
   (context "/" []
     (route/resources "/")
     (GET "/*" [] (response/resource-response "index.html" {:root "public"}))

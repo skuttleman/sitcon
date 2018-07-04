@@ -10,6 +10,7 @@ type alias GlobalModel =
     { page : Maybe Page
     , userDetails : WebData UserModel
     , emoji : WebData (List Emoji)
+    , availableWorkspaces : WebData (List Workspace)
     }
 
 
@@ -18,6 +19,7 @@ type Page
     | LoginPage
     | ChannelPage String String
     | ConversationPage String String
+    | WorkspacePage String
 
 
 type alias UserModel =
@@ -37,10 +39,27 @@ type alias Emoji =
     }
 
 
+type alias Workspace =
+    { id : Uuid.Uuid
+    , handle : String
+    , description : Maybe String
+    , channels : List Channel
+    }
+
+
+type alias Channel =
+    { id : Uuid.Uuid
+    , handle : String
+    , purpose : Maybe String
+    , private : Bool
+    }
+
+
 matchers : List (Matcher Page)
 matchers =
     [ static HomePage "/"
     , static LoginPage "/login"
+    , dyn1 WorkspacePage "/workspaces/" string ""
     , dyn2 ChannelPage "/workspaces/" string "/channels/" string ""
     , dyn2 ConversationPage "/workspaces/" string "/conversations/" string ""
     ]

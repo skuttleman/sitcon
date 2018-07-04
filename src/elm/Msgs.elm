@@ -13,3 +13,5 @@ type Msg
     | LocationOnChanged Navigation.Location
     | UserDetailsOnReceive (WebData GlobalModels.UserModel)
     | UserFormChange GlobalModels.UserForm
+    | WorkspacesOnReceiveWithChannels (WebData (List GlobalModels.Workspace))
+    | WorkspacesSetCurrent (List GlobalModels.Workspace) (Maybe GlobalModels.Page)

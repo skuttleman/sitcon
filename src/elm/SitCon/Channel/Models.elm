@@ -1,6 +1,8 @@
 module SitCon.Channel.Models exposing (..)
 
+import SitCon.Global.Models as GlobalModels
+
 
 type alias ChannelModel =
-    { something : String
+    { activeChannel : Maybe GlobalModels.Channel
     }

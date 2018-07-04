@@ -7,7 +7,7 @@ import SitCon.Channel.Models as ChannelModels exposing (ChannelModel)
 
 init : Navigation.Location -> ( ChannelModel, Cmd Msg )
 init _ =
-    ( { something = "anything, really" }
+    ( { activeChannel = Nothing }
     , Cmd.none
     )
 
