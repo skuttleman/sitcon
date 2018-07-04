@@ -35,8 +35,8 @@ when bool tree =
         span [] []
 
 
-possibly : (a -> Html Msg) -> (b -> Maybe a) -> b -> Html Msg
-possibly view f input =
+possibly : (b -> Maybe a) -> b -> (a -> Html Msg) -> Html Msg
+possibly f input view =
     case f input of
         Just value ->
             view value
@@ -45,11 +45,11 @@ possibly view f input =
             span [] []
 
 
-maybe : (a -> Html Msg) -> Maybe a -> Html Msg
-maybe view input =
-    possibly view (always input) ()
+maybe : Maybe a -> (a -> Html Msg) -> Html Msg
+maybe input =
+    possibly (always input) ()
 
 
-success : (a -> Html Msg) -> RemoteData.WebData a -> Html Msg
-success view =
-    possibly view webDataToMaybe
+success : RemoteData.WebData a -> (a -> Html Msg) -> Html Msg
+success =
+    possibly webDataToMaybe

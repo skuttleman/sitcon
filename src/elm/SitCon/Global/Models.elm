@@ -73,3 +73,27 @@ pathToPage =
 locationToPage : Navigation.Location -> Maybe Page
 locationToPage =
     .pathname >> pathToPage
+
+
+pageToPath : Page -> String
+pageToPath page =
+    case page of
+        HomePage ->
+            "/"
+
+        LoginPage ->
+            "/login"
+
+        ChannelPage workspaceHandle channelHandle ->
+            "/workspaces/" ++ workspaceHandle ++ "/channels/" ++ channelHandle
+
+        ConversationPage workspaceHandle conversationId ->
+            "/workspaces/" ++ workspaceHandle ++ "/conversations/" ++ conversationId
+
+        WorkspacePage workspaceHandle ->
+            "/workspaces/" ++ workspaceHandle
+
+
+maybePageTo : Maybe Page -> String
+maybePageTo =
+    Maybe.map pageToPath >> Maybe.withDefault "/notfound"

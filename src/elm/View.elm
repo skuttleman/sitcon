@@ -15,13 +15,25 @@ workspacesBar : List GlobalModels.Workspace -> Html Msg
 workspacesBar workspaces =
     div [] <|
         [ div [] [ text "Workspaces: " ]
-        , navList (.handle >> ((++) "/workspaces/")) (.handle >> text) [] workspaces
+        , navList (.handle >> GlobalModels.WorkspacePage >> GlobalModels.pageToPath)
+            (.handle >> text)
+            []
+            workspaces
         ]
 
 
-channelsBar : List GlobalModels.Channel -> Html Msg
-channelsBar channels =
-    div [] <| [ div [] [ text "Channels: " ] ] ++ List.map (.handle >> text) channels
+channelsBar : Maybe GlobalModels.Workspace -> List GlobalModels.Channel -> Html Msg
+channelsBar workspace channels =
+    div [] <|
+        [ div [] [ text "Channels: " ]
+        , maybe workspace
+            (\{ handle } ->
+                navList (.handle >> GlobalModels.ChannelPage handle >> GlobalModels.pageToPath)
+                    (.handle >> text)
+                    []
+                    channels
+            )
+        ]
 
 
 navHeader : Html Msg
@@ -41,8 +53,8 @@ root ({ global, login, workspace } as model) =
         RemoteData.Success user ->
             div []
                 [ navHeader
-                , success workspacesBar global.availableWorkspaces
-                , maybe channelsBar (Maybe.map .channels workspace.activeWorkspace)
+                , success global.availableWorkspaces workspacesBar
+                , maybe (Maybe.map .channels workspace.activeWorkspace) (channelsBar workspace.activeWorkspace)
                 , router global.page model
                 ]
 

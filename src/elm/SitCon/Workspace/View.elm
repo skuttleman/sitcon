@@ -8,7 +8,12 @@ import Shared.Views exposing (..)
 
 
 root : GlobalModels.GlobalModel -> WorkspaceModels.WorkspaceModel -> Html Msg
-root _ { activeWorkspace } =
-    maybe
-        (always (div [] [ text "Active workspace, bitchez!" ]))
-        activeWorkspace
+root _ { activeWorkspace, activeChannel } =
+    div []
+        [ maybe
+            activeWorkspace
+            (always <| text "Active workspace!")
+        , maybe
+            activeChannel
+            (always <| text "Active channel!")
+        ]

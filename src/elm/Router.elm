@@ -21,7 +21,7 @@ router page =
             withGlobal LoginView.root .login
 
         Just (ChannelPage workspaceHandle channelHandle) ->
-            always notFound
+            withGlobal WorkspaceView.root .workspace
 
         Just (ConversationPage workspaceHandle conversationHandle) ->
             always notFound

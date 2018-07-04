@@ -37,9 +37,7 @@ update msg model =
                 page =
                     pathToPage path
             in
-                ( { model | page = page }
-                , Cmd.batch [ Navigation.newUrl path, do <| WorkspacesSetCurrent (succeedOr [] model.availableWorkspaces) page ]
-                )
+                ( { model | page = page }, Navigation.newUrl path )
 
         LocationOnChanged { pathname } ->
             let
