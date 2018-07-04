@@ -20,13 +20,13 @@ router page =
         Just LoginPage ->
             withGlobal LoginView.root .login
 
-        Just (ChannelPage workspace channel) ->
+        Just (ChannelPage workspaceHandle channelHandle) ->
             always notFound
 
-        Just (ConversationPage workspace conversation) ->
+        Just (ConversationPage workspaceHandle conversationHandle) ->
             always notFound
 
-        Just (WorkspacePage workspace) ->
+        Just (WorkspacePage workspaceHandle) ->
             withGlobal WorkspaceView.root .workspace
 
         Nothing ->

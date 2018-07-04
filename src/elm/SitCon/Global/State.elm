@@ -41,6 +41,15 @@ update msg model =
                 , Cmd.batch [ Navigation.newUrl path, do <| WorkspacesSetCurrent (succeedOr [] model.availableWorkspaces) page ]
                 )
 
+        LocationOnChanged { pathname } ->
+            let
+                page =
+                    pathToPage pathname
+            in
+                ( { model | page = page }
+                , do <| WorkspacesSetCurrent (succeedOr [] model.availableWorkspaces) page
+                )
+
         Login userForm ->
             ( model, Navigation.load <| loginUrl userForm )
 
