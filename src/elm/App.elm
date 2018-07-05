@@ -4,12 +4,10 @@ import Models exposing (AppModel)
 import Msgs exposing (..)
 import Navigation
 import Shared.Utils exposing (..)
-import SitCon.Channel.State as ChannelState
 import SitCon.Global.State as GlobalState
 import SitCon.Login.State as LoginState
 import SitCon.Workspace.State as WorkspaceState
 import View
-import RemoteData
 
 
 init : Navigation.Location -> ( AppModel, Cmd Msg )

@@ -1,7 +1,7 @@
 module View exposing (root)
 
 import Html exposing (Html, a, button, div, header, span, text)
-import Html.Attributes exposing (href)
+import Html.Attributes exposing (class, href)
 import Models exposing (AppModel)
 import Msgs exposing (..)
 import RemoteData
@@ -13,24 +13,24 @@ import SitCon.Login.View as LoginView
 
 workspacesBar : List GlobalModels.Workspace -> Html Msg
 workspacesBar workspaces =
-    div [] <|
+    div [ class "workspaces-wrapper" ]
         [ div [] [ text "Workspaces: " ]
         , navList (.handle >> GlobalModels.WorkspacePage >> GlobalModels.pageToPath)
             (.handle >> text)
-            []
+            [ class "workspaces" ]
             workspaces
         ]
 
 
 channelsBar : Maybe GlobalModels.Workspace -> List GlobalModels.Channel -> Html Msg
 channelsBar workspace channels =
-    div [] <|
+    div [ class "channels-wrapper" ]
         [ div [] [ text "Channels: " ]
         , maybe workspace
             (\{ handle } ->
                 navList (.handle >> GlobalModels.ChannelPage handle >> GlobalModels.pageToPath)
-                    (.handle >> text)
-                    []
+                    (.handle >> (++) "# " >> text)
+                    [ class "channels" ]
                     channels
             )
         ]
@@ -38,7 +38,7 @@ channelsBar workspace channels =
 
 navHeader : Html Msg
 navHeader =
-    header []
+    header [ class "app-header" ]
         [ text "[ "
         , link "/" [] [ text "to home" ]
         , text " ] [ "
@@ -53,9 +53,11 @@ root ({ global, login, workspace } as model) =
         RemoteData.Success user ->
             div []
                 [ navHeader
-                , success global.availableWorkspaces workspacesBar
-                , maybe (Maybe.map .channels workspace.activeWorkspace) (channelsBar workspace.activeWorkspace)
-                , router global.page model
+                , div [ class "main-app" ]
+                    [ success global.availableWorkspaces workspacesBar
+                    , maybe (Maybe.map .channels workspace.activeWorkspace) (channelsBar workspace.activeWorkspace)
+                    , router global.page model
+                    ]
                 ]
 
         RemoteData.Failure _ ->

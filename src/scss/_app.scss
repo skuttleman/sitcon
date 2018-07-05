@@ -1,0 +1,40 @@
+.main-app {
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - #{$header-height} - (#{$section-padding} * 2));
+
+  .workspaces-wrapper {
+    background-color: $orange;
+    width: $sidebar-1-width;
+    padding: $section-padding;
+  }
+
+  .channels-wrapper {
+    background-color: $subtle-gray;
+    width: $sidebar-2-width;
+    padding: $section-padding;
+
+    .channels {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .nav-item {
+    text-decoration: unset;
+  }
+
+  .page-root {
+    padding: $section-padding;
+    width: calc(100vw - #{$sidebar-1-width} - #{$sidebar-2-width});
+  }
+}
+
+.app-header {
+  height: $header-height;
+  width: calc(100vw - (#{$section-padding} * 2));
+  padding: $section-padding;
+  background-color: lighten(blue, 45%);
+  display: flex;
+  justify-content: flex-end;
+}

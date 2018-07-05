@@ -94,6 +94,23 @@ pageToPath page =
             "/workspaces/" ++ workspaceHandle
 
 
-maybePageTo : Maybe Page -> String
-maybePageTo =
-    Maybe.map pageToPath >> Maybe.withDefault "/notfound"
+maybePageToClass : Maybe Page -> String
+maybePageToClass page =
+    case page of
+        Just HomePage ->
+            "home-page"
+
+        Just LoginPage ->
+            "login-page"
+
+        Just (ChannelPage _ _) ->
+            "channel-page"
+
+        Just (ConversationPage _ _) ->
+            "conversation-page"
+
+        Just (WorkspacePage _) ->
+            "workspace-page"
+
+        Nothing ->
+            "not-found"

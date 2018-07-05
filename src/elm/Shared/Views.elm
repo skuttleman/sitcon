@@ -4,17 +4,18 @@ import Html exposing (Html, a, div, li, span, text, ul)
 import Html.Attributes exposing (class, href)
 import Msgs exposing (..)
 import RemoteData
+import Shared.Models exposing (..)
 import Shared.Utils exposing (..)
 
 
-notFound : Html Msg
+notFound : Html msg
 notFound =
     div [] [ text "not found" ]
 
 
-spinner : Html Msg
+spinner : Html msg
 spinner =
-    div [ class "spinner" ] [ text "spinner" ]
+    div [ class "spinner" ] []
 
 
 link : String -> List (Html.Attribute Msg) -> List (Html Msg) -> Html Msg
@@ -24,10 +25,11 @@ link url attributes =
 
 navList : (a -> String) -> (a -> Html Msg) -> List (Html.Attribute Msg) -> List a -> Html Msg
 navList toUrl toChild attributes items =
-    ul attributes <| List.map (\item -> link (toUrl item) [] [ toChild item ]) items
+    ul (class "nav-list" :: attributes) <|
+        List.map (\item -> link (toUrl item) [ class "nav-item" ] [ toChild item ]) items
 
 
-when : Bool -> Html Msg -> Html Msg
+when : Bool -> Html msg -> Html msg
 when bool tree =
     if bool then
         tree
@@ -35,7 +37,7 @@ when bool tree =
         span [] []
 
 
-possibly : (b -> Maybe a) -> b -> (a -> Html Msg) -> Html Msg
+possibly : (b -> Maybe a) -> b -> (a -> Html msg) -> Html msg
 possibly f input view =
     case f input of
         Just value ->
@@ -45,11 +47,26 @@ possibly f input view =
             span [] []
 
 
-maybe : Maybe a -> (a -> Html Msg) -> Html Msg
+maybe : Maybe a -> (a -> Html msg) -> Html msg
 maybe input =
     possibly (always input) ()
 
 
-success : RemoteData.WebData a -> (a -> Html Msg) -> Html Msg
+success : RemoteData.WebData a -> (a -> Html msg) -> Html msg
 success =
     possibly webDataToMaybe
+
+
+justLeft : OneOf a b -> (a -> Html msg) -> Html msg
+justLeft =
+    possibly whenLeft
+
+
+justRight : OneOf a b -> (b -> Html msg) -> Html msg
+justRight =
+    possibly whenRight
+
+
+both : OneOf a b -> (( a, b ) -> Html msg) -> Html msg
+both =
+    possibly whenBoth
