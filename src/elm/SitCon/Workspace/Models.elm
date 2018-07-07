@@ -1,9 +1,8 @@
-module SitCon.Workspace.Models exposing (..)
+module SitCon.Workspace.Models exposing (WorkspaceModel)
 
-import SitCon.Global.Models as GlobalModels
+import SitCon.Global.Models exposing (Channel, Workspace)
 
 
 type alias WorkspaceModel =
-    { activeWorkspace : Maybe GlobalModels.Workspace
-    , activeChannel : Maybe GlobalModels.Channel
+    { active : Maybe ( Workspace, Maybe Channel )
     }

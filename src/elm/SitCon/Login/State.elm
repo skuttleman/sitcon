@@ -1,6 +1,6 @@
 module SitCon.Login.State exposing (init, subs, update)
 
-import Msgs exposing (..)
+import Msgs exposing (Msg(..))
 import Navigation
 import SitCon.Login.Models as LoginModels exposing (LoginModel)
 

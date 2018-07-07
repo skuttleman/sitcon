@@ -1,24 +1,29 @@
-module SitCon.Global.IO exposing (..)
+module SitCon.Global.IO exposing (fetchChannelMessages, fetchEmoji, fetchWorkspaces, fetchUserDetails)
 
-import Json.Decode as Decode
+import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Pipeline exposing (decode, optional, optionalAt, required, requiredAt)
-import Msgs exposing (..)
-import SitCon.Global.Models as GlobalModels
-import Shared.Utils exposing (..)
+import Msgs exposing (Msg(..))
+import SitCon.Global.Models exposing (Channel, Emoji, UserModel, Workspace)
+import Shared.Utils exposing (fetch)
 import Uuid
 
 
 -- HTTP calls
 
 
-fetchUserDetails : Cmd Msg
-fetchUserDetails =
-    fetch "/api/user/details" userDetailsDecoder UserDetailsOnReceive
+fetchChannelMessages : String -> String -> Cmd Msg
+fetchChannelMessages workspace channel =
+    fetch ("/api/workspaces/" ++ workspace ++ "/channels/" ++ channel ++ "/messages") emojiListDecoder EmojiOnReceive
 
 
 fetchEmoji : Cmd Msg
 fetchEmoji =
     fetch "/api/emoji" emojiListDecoder EmojiOnReceive
+
+
+fetchUserDetails : Cmd Msg
+fetchUserDetails =
+    fetch "/api/user/details" userDetailsDecoder UserDetailsOnReceive
 
 
 fetchWorkspaces : Cmd Msg
@@ -30,56 +35,56 @@ fetchWorkspaces =
 -- Decoders
 
 
-nullable : String -> Decode.Decoder a -> Decode.Decoder (Maybe a -> b) -> Decode.Decoder b
-nullable key decoder =
-    optional key (Decode.maybe decoder) Nothing
+channelDecoder : Decoder Channel
+channelDecoder =
+    decode Channel
+        |> required "id" Uuid.decoder
+        |> required "handle" Decode.string
+        |> nullable "purpose" Decode.string
+        |> required "private" Decode.bool
 
 
-nullableAt : List String -> Decode.Decoder a -> Decode.Decoder (Maybe a -> b) -> Decode.Decoder b
-nullableAt path decoder =
-    optionalAt path (Decode.maybe decoder) Nothing
-
-
-userDetailsDecoder : Decode.Decoder GlobalModels.UserModel
-userDetailsDecoder =
-    decode GlobalModels.UserModel
-        |> requiredAt [ "user", "id" ] Uuid.decoder
-        |> requiredAt [ "user", "email" ] Decode.string
-
-
-emojiListDecoder : Decode.Decoder (List GlobalModels.Emoji)
-emojiListDecoder =
-    decode identity
-        |> required "emoji" (Decode.list emojiDecoder)
-
-
-emojiDecoder : Decode.Decoder GlobalModels.Emoji
+emojiDecoder : Decoder Emoji
 emojiDecoder =
-    decode GlobalModels.Emoji
+    decode Emoji
         |> required "id" Uuid.decoder
         |> required "utf_string" Decode.string
         |> required "handles" (Decode.list Decode.string)
 
 
-workspaceListDecoder : Decode.Decoder (List GlobalModels.Workspace)
-workspaceListDecoder =
+emojiListDecoder : Decoder (List Emoji)
+emojiListDecoder =
     decode identity
-        |> required "workspaces" (Decode.list workspaceDecoder)
+        |> required "emoji" (Decode.list emojiDecoder)
 
 
-workspaceDecoder : Decode.Decoder GlobalModels.Workspace
+nullable : String -> Decoder a -> Decoder (Maybe a -> b) -> Decoder b
+nullable key decoder =
+    optional key (Decode.maybe decoder) Nothing
+
+
+nullableAt : List String -> Decoder a -> Decoder (Maybe a -> b) -> Decoder b
+nullableAt path decoder =
+    optionalAt path (Decode.maybe decoder) Nothing
+
+
+userDetailsDecoder : Decoder UserModel
+userDetailsDecoder =
+    decode UserModel
+        |> requiredAt [ "user", "id" ] Uuid.decoder
+        |> requiredAt [ "user", "email" ] Decode.string
+
+
+workspaceDecoder : Decoder Workspace
 workspaceDecoder =
-    decode GlobalModels.Workspace
+    decode Workspace
         |> required "id" Uuid.decoder
         |> required "handle" Decode.string
         |> nullable "description" Decode.string
         |> required "channels" (Decode.list channelDecoder)
 
 
-channelDecoder : Decode.Decoder GlobalModels.Channel
-channelDecoder =
-    decode GlobalModels.Channel
-        |> required "id" Uuid.decoder
-        |> required "handle" Decode.string
-        |> nullable "purpose" Decode.string
-        |> required "private" Decode.bool
+workspaceListDecoder : Decoder (List Workspace)
+workspaceListDecoder =
+    decode identity
+        |> required "workspaces" (Decode.list workspaceDecoder)

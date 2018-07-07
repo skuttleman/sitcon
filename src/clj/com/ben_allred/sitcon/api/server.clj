@@ -31,7 +31,8 @@
     (ANY "/*" {:keys [user]} (when-not user (respond/with [:status/unauthorized])))
     user/user
     emoji/emoji
-    workspaces/workspaces)
+    workspaces/workspaces
+    (ANY "/*" [] (not-found)))
   (context "/" []
     (route/resources "/")
     (GET "/*" [] (response/resource-response "index.html" {:root "public"}))

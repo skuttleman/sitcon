@@ -3,36 +3,35 @@ module View exposing (root)
 import Html exposing (Html, a, button, div, header, span, text)
 import Html.Attributes exposing (class, href)
 import Models exposing (AppModel)
-import Msgs exposing (..)
+import Msgs exposing (Msg(..))
 import RemoteData
 import Router exposing (router)
-import Shared.Views exposing (..)
-import SitCon.Global.Models as GlobalModels
+import Shared.Views exposing (link, maybe, navList, spinner, success)
+import SitCon.Global.Models exposing (Channel, Page(..), Workspace)
+import SitCon.Global.Utils exposing (pageToPath)
 import SitCon.Login.View as LoginView
 
 
-workspacesBar : List GlobalModels.Workspace -> Html Msg
+workspacesBar : List Workspace -> Html Msg
 workspacesBar workspaces =
     div [ class "workspaces-wrapper" ]
         [ div [] [ text "Workspaces: " ]
-        , navList (.handle >> GlobalModels.WorkspacePage >> GlobalModels.pageToPath)
+        , navList (.handle >> WorkspacePage >> pageToPath)
             (.handle >> text)
             [ class "workspaces" ]
             workspaces
         ]
 
 
-channelsBar : Maybe GlobalModels.Workspace -> List GlobalModels.Channel -> Html Msg
-channelsBar workspace channels =
+channelsBar : ( Workspace, Maybe a ) -> Html Msg
+channelsBar ( workspace, _ ) =
     div [ class "channels-wrapper" ]
-        [ div [] [ text "Channels: " ]
-        , maybe workspace
-            (\{ handle } ->
-                navList (.handle >> GlobalModels.ChannelPage handle >> GlobalModels.pageToPath)
-                    (.handle >> (++) "# " >> text)
-                    [ class "channels" ]
-                    channels
-            )
+        [ div []
+            [ text "Channels: " ]
+        , navList (.handle >> ChannelPage workspace.handle >> pageToPath)
+            (.handle >> (++) "# " >> text)
+            [ class "channels" ]
+            workspace.channels
         ]
 
 
@@ -55,7 +54,7 @@ root ({ global, login, workspace } as model) =
                 [ navHeader
                 , div [ class "main-app" ]
                     [ success global.availableWorkspaces workspacesBar
-                    , maybe (Maybe.map .channels workspace.activeWorkspace) (channelsBar workspace.activeWorkspace)
+                    , maybe workspace.active channelsBar
                     , router global.page model
                     ]
                 ]

@@ -1,17 +1,17 @@
-module Msgs exposing (..)
+module Msgs exposing (Msg(..))
 
 import Navigation
-import RemoteData exposing (..)
-import SitCon.Global.Models as GlobalModels
+import RemoteData exposing (WebData)
+import SitCon.Global.Models exposing (Emoji, Page(..), UserForm, UserModel, Workspace)
 
 
 type Msg
     = NoOp
-    | EmojiOnReceive (WebData (List GlobalModels.Emoji))
-    | Login GlobalModels.UserForm
+    | EmojiOnReceive (WebData (List Emoji))
+    | Login UserForm
     | LocationChange String
     | LocationOnChanged Navigation.Location
-    | UserDetailsOnReceive (WebData GlobalModels.UserModel)
-    | UserFormChange GlobalModels.UserForm
-    | WorkspacesOnReceiveWithChannels (WebData (List GlobalModels.Workspace))
-    | WorkspacesSetCurrent (List GlobalModels.Workspace) (Maybe GlobalModels.Page)
+    | UserDetailsOnReceive (WebData UserModel)
+    | UserFormChange UserForm
+    | WorkspacesOnReceiveWithChannels (WebData (List Workspace))
+    | WorkspacesSetCurrent (List Workspace) (Maybe Page)

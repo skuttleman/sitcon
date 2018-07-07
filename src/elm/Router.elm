@@ -2,14 +2,14 @@ module Router exposing (router)
 
 import Html exposing (Html, a, div, text)
 import Html.Attributes exposing (class)
-import Models exposing (..)
-import Msgs exposing (..)
-import Shared.Views exposing (..)
-import SitCon.Global.Models exposing (..)
+import Models exposing (AppModel)
+import Msgs exposing (Msg(..))
+import Shared.Views exposing (notFound)
+import SitCon.Global.Models exposing (Page(..))
+import SitCon.Global.Utils exposing (maybePageToClass, withGlobal)
 import SitCon.Global.View as GlobalView
 import SitCon.Login.View as LoginView
 import SitCon.Workspace.View as WorkspaceView
-import Utils exposing (..)
 
 
 withPageClass : Maybe Page -> (AppModel -> Html msg) -> AppModel -> Html msg

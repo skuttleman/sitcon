@@ -1,6 +1,6 @@
-module SitCon.Login.Models exposing (..)
+module SitCon.Login.Models exposing (LoginModel)
 
-import SitCon.Global.Models exposing (..)
+import SitCon.Global.Models exposing (UserForm)
 
 
 type alias LoginModel =

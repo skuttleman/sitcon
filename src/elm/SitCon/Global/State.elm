@@ -1,21 +1,22 @@
 module SitCon.Global.State exposing (init, subs, update)
 
-import Msgs exposing (..)
-import Navigation
-import RemoteData
-import Shared.Utils exposing (..)
-import SitCon.Global.Models exposing (..)
-import SitCon.Global.IO as GlobalIO
+import Msgs exposing (Msg(..))
+import Navigation exposing (Location)
+import RemoteData exposing (RemoteData(..))
+import SitCon.Global.IO exposing (fetchEmoji, fetchWorkspaces, fetchUserDetails)
+import SitCon.Global.Models exposing (GlobalModel, Page(..), UserForm)
+import SitCon.Global.Utils exposing (locationToPage, pathToPage)
+import Shared.Utils exposing (do, succeedOr)
 
 
-init : Navigation.Location -> ( GlobalModel, Cmd Msg )
+init : Location -> ( GlobalModel, Cmd Msg )
 init location =
     ( { page = locationToPage location
-      , userDetails = RemoteData.Loading
-      , emoji = RemoteData.Loading
-      , availableWorkspaces = RemoteData.Loading
+      , userDetails = Loading
+      , emoji = Loading
+      , availableWorkspaces = Loading
       }
-    , Cmd.batch [ GlobalIO.fetchUserDetails, GlobalIO.fetchEmoji, GlobalIO.fetchWorkspaces ]
+    , Cmd.batch [ fetchUserDetails, fetchEmoji, fetchWorkspaces ]
     )
 
 
@@ -53,7 +54,7 @@ update msg model =
 
         UserDetailsOnReceive userResponse ->
             case userResponse of
-                RemoteData.Success user ->
+                Success user ->
                     ( { model | userDetails = userResponse }, Cmd.none )
 
                 _ ->
@@ -66,7 +67,7 @@ update msg model =
 
         WorkspacesOnReceiveWithChannels workspacesResponse ->
             case workspacesResponse of
-                RemoteData.Success workspaces ->
+                Success workspaces ->
                     ( { model | availableWorkspaces = workspacesResponse }
                     , do <| WorkspacesSetCurrent workspaces model.page
                     )

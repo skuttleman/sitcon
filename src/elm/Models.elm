@@ -1,12 +1,12 @@
-module Models exposing (..)
+module Models exposing (AppModel)
 
-import SitCon.Global.Models as GlobalModels
-import SitCon.Login.Models as LoginModels
-import SitCon.Workspace.Models as WorkspaceModels
+import SitCon.Global.Models exposing (GlobalModel)
+import SitCon.Login.Models exposing (LoginModel)
+import SitCon.Workspace.Models exposing (WorkspaceModel)
 
 
 type alias AppModel =
-    { global : GlobalModels.GlobalModel
-    , login : LoginModels.LoginModel
-    , workspace : WorkspaceModels.WorkspaceModel
+    { global : GlobalModel
+    , login : LoginModel
+    , workspace : WorkspaceModel
     }

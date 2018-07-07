@@ -1,15 +1,16 @@
 module SitCon.Workspace.State exposing (init, subs, update)
 
-import Msgs exposing (..)
-import Navigation
-import Shared.Utils exposing (..)
-import SitCon.Global.Models as GlobalModels
+import Msgs exposing (Msg(..))
+import Navigation exposing (Location)
+import Shared.Utils exposing (consMaybe, maybeLift, twople, when)
+import SitCon.Global.IO exposing (fetchChannelMessages)
+import SitCon.Global.Models exposing (Channel, Page(..), Workspace)
 import SitCon.Workspace.Models exposing (WorkspaceModel)
 
 
-init : Navigation.Location -> ( WorkspaceModel, Cmd Msg )
+init : Location -> ( WorkspaceModel, Cmd Msg )
 init location =
-    ( { activeWorkspace = Nothing, activeChannel = Nothing }, Cmd.none )
+    ( { active = Nothing }, Cmd.none )
 
 
 subs : WorkspaceModel -> Sub Msg
@@ -24,54 +25,84 @@ resolveHandle workspaces handle =
         |> List.head
 
 
-findWorkspace : List GlobalModels.Workspace -> GlobalModels.Page -> Maybe GlobalModels.Workspace
+findWorkspace : List Workspace -> Page -> Maybe Workspace
 findWorkspace workspaces page =
     case page of
-        GlobalModels.WorkspacePage handle ->
+        WorkspacePage handle ->
             resolveHandle workspaces handle
 
-        GlobalModels.ChannelPage handle _ ->
+        ChannelPage handle _ ->
             resolveHandle workspaces handle
 
         _ ->
             Nothing
 
 
-findChannel : Maybe GlobalModels.Page -> List GlobalModels.Channel -> Maybe GlobalModels.Channel
-findChannel page channels =
+findChannel : Maybe Page -> ( Workspace, a ) -> Maybe Channel
+findChannel page ( { channels }, _ ) =
     case page of
-        Just (GlobalModels.ChannelPage _ handle) ->
+        Just (ChannelPage _ handle) ->
             resolveHandle channels handle
 
         _ ->
             Nothing
 
 
-setCurrentWorkspace : List GlobalModels.Workspace -> Maybe GlobalModels.Page -> WorkspaceModel -> WorkspaceModel
+setCurrentWorkspace : List Workspace -> Maybe Page -> WorkspaceModel -> WorkspaceModel
 setCurrentWorkspace workspaces page model =
     { model
-        | activeWorkspace =
+        | active =
             page
-                |> Maybe.map (findWorkspace workspaces)
+                |> (Maybe.map (findWorkspace workspaces))
                 |> maybeLift
+                |> (Maybe.map ((flip twople) Nothing))
     }
 
 
-setCurrentChannel : Maybe GlobalModels.Page -> WorkspaceModel -> WorkspaceModel
+setCurrentChannel : Maybe Page -> WorkspaceModel -> WorkspaceModel
 setCurrentChannel page model =
-    { model
-        | activeChannel =
-            model.activeWorkspace
-                |> Maybe.map (.channels >> findChannel page)
+    let
+        channel =
+            model.active
+                |> (Maybe.map (findChannel page))
                 |> maybeLift
-    }
+    in
+        { model | active = Maybe.map (Tuple.mapSecond <| always channel) model.active }
+
+
+requireUsers : WorkspaceModel -> WorkspaceModel -> Maybe (Cmd Msg)
+requireUsers oldModel newModel =
+    Nothing
+
+
+requireMessages : WorkspaceModel -> WorkspaceModel -> Maybe (Cmd Msg)
+requireMessages oldModel newModel =
+    when (oldModel.active /= newModel.active) <|
+        case newModel.active of
+            Just ( workspace, Just channel ) ->
+                fetchChannelMessages workspace.handle channel.handle
+
+            _ ->
+                Cmd.none
+
+
+withCmds : WorkspaceModel -> WorkspaceModel -> ( WorkspaceModel, Cmd Msg )
+withCmds oldModel newModel =
+    []
+        |> consMaybe (requireUsers oldModel newModel)
+        |> consMaybe (requireMessages oldModel newModel)
+        |> Cmd.batch
+        |> twople newModel
 
 
 update : Msg -> WorkspaceModel -> ( WorkspaceModel, Cmd Msg )
 update msg model =
     case msg of
         WorkspacesSetCurrent workspaces page ->
-            ( (setCurrentWorkspace workspaces page >> setCurrentChannel page) model, Cmd.none )
+            model
+                |> setCurrentWorkspace workspaces page
+                |> setCurrentChannel page
+                |> withCmds model
 
         _ ->
             ( model, Cmd.none )

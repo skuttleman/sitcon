@@ -1,11 +1,9 @@
 module SitCon.Workspace.View exposing (root)
 
 import Html exposing (Html, div, text)
-import Msgs exposing (..)
+import Msgs exposing (Msg(..))
 import SitCon.Global.Models as GlobalModels
 import SitCon.Workspace.Models as WorkspaceModels
-import Shared.Models exposing (..)
-import Shared.Utils exposing (..)
 
 
 channelRoot : GlobalModels.GlobalModel -> GlobalModels.Workspace -> GlobalModels.Channel -> Html Msg
@@ -19,12 +17,12 @@ workspaceRoot global workspace =
 
 
 root : GlobalModels.GlobalModel -> WorkspaceModels.WorkspaceModel -> Html Msg
-root global { activeWorkspace, activeChannel } =
-    case maybeOneOf activeWorkspace activeChannel of
-        Both workspace channel ->
+root global { active } =
+    case active of
+        Just ( workspace, Just channel ) ->
             channelRoot global workspace channel
 
-        JustLeft workspace ->
+        Just ( workspace, _ ) ->
             workspaceRoot global workspace
 
         _ ->

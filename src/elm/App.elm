@@ -1,16 +1,16 @@
-module App exposing (..)
+module App exposing (main)
 
 import Models exposing (AppModel)
-import Msgs exposing (..)
-import Navigation
-import Shared.Utils exposing (..)
+import Msgs exposing (Msg(..))
+import Navigation exposing (Location, program)
+import Shared.Utils exposing (call)
 import SitCon.Global.State as GlobalState
 import SitCon.Login.State as LoginState
 import SitCon.Workspace.State as WorkspaceState
 import View
 
 
-init : Navigation.Location -> ( AppModel, Cmd Msg )
+init : Location -> ( AppModel, Cmd Msg )
 init location =
     let
         ( global, globalCmd ) =
@@ -59,7 +59,7 @@ subs model =
 
 main : Program Never AppModel Msg
 main =
-    Navigation.program LocationOnChanged
+    program LocationOnChanged
         { init = init
         , view = View.root
         , update = update

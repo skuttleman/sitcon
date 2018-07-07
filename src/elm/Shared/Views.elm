@@ -2,10 +2,9 @@ module Shared.Views exposing (..)
 
 import Html exposing (Html, a, div, li, span, text, ul)
 import Html.Attributes exposing (class, href)
-import Msgs exposing (..)
+import Msgs exposing (Msg(..))
 import RemoteData
-import Shared.Models exposing (..)
-import Shared.Utils exposing (..)
+import Shared.Utils exposing (prevent, webDataToMaybe)
 
 
 notFound : Html msg
@@ -55,18 +54,3 @@ maybe input =
 success : RemoteData.WebData a -> (a -> Html msg) -> Html msg
 success =
     possibly webDataToMaybe
-
-
-justLeft : OneOf a b -> (a -> Html msg) -> Html msg
-justLeft =
-    possibly whenLeft
-
-
-justRight : OneOf a b -> (b -> Html msg) -> Html msg
-justRight =
-    possibly whenRight
-
-
-both : OneOf a b -> (( a, b ) -> Html msg) -> Html msg
-both =
-    possibly whenBoth
