@@ -1,8 +1,25 @@
-module SitCon.Workspace.Models exposing (WorkspaceModel)
+module SitCon.Workspace.Models exposing (Entry, Message, WorkspaceModel)
 
-import SitCon.Global.Models exposing (Channel, Workspace)
+import RemoteData exposing (WebData)
+import SitCon.Global.Models exposing (Channel, UserModel, Workspace)
+import Uuid exposing (Uuid)
+
+
+type alias Entry =
+    { id : Uuid
+    , createdAt : String
+    , creator : UserModel
+    , message : Maybe Message
+    }
+
+
+type alias Message =
+    { id : Uuid
+    , body : String
+    }
 
 
 type alias WorkspaceModel =
     { active : Maybe ( Workspace, Maybe Channel )
+    , entries : WebData (List Entry)
     }

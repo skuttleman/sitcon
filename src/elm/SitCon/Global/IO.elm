@@ -4,6 +4,7 @@ import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Pipeline exposing (decode, optional, optionalAt, required, requiredAt)
 import Msgs exposing (Msg(..))
 import SitCon.Global.Models exposing (Channel, Emoji, UserModel, Workspace)
+import SitCon.Workspace.Models exposing (Entry, Message)
 import Shared.Utils exposing (fetch)
 import Uuid
 
@@ -13,22 +14,30 @@ import Uuid
 
 fetchChannelMessages : String -> String -> Cmd Msg
 fetchChannelMessages workspace channel =
-    fetch ("/api/workspaces/" ++ workspace ++ "/channels/" ++ channel ++ "/messages") emojiListDecoder EmojiOnReceive
+    fetch ("/api/workspaces/" ++ workspace ++ "/channels/" ++ channel ++ "/messages")
+        (identityDecoder "entries" <| Decode.list entryDecoder)
+        MessagesOnRecieve
 
 
 fetchEmoji : Cmd Msg
 fetchEmoji =
-    fetch "/api/emoji" emojiListDecoder EmojiOnReceive
+    fetch "/api/emoji"
+        (identityDecoder "emoji" <| Decode.list emojiDecoder)
+        EmojiOnReceive
 
 
 fetchUserDetails : Cmd Msg
 fetchUserDetails =
-    fetch "/api/user/details" userDetailsDecoder UserDetailsOnReceive
+    fetch "/api/user/details"
+        (identityDecoder "user" userDecoder)
+        UserDetailsOnReceive
 
 
 fetchWorkspaces : Cmd Msg
 fetchWorkspaces =
-    fetch "/api/workspaces" workspaceListDecoder WorkspacesOnReceiveWithChannels
+    fetch "/api/workspaces"
+        (identityDecoder "workspaces" <| Decode.list workspaceDecoder)
+        WorkspacesOnReceiveWithChannels
 
 
 
@@ -49,13 +58,29 @@ emojiDecoder =
     decode Emoji
         |> required "id" Uuid.decoder
         |> required "utf_string" Decode.string
-        |> required "handles" (Decode.list Decode.string)
+        |> required "handles" (Decode.list <| identityDecoder "handle" Decode.string)
 
 
-emojiListDecoder : Decoder (List Emoji)
-emojiListDecoder =
+entryDecoder : Decoder Entry
+entryDecoder =
+    decode Entry
+        |> required "id" Uuid.decoder
+        |> required "created_at" Decode.string
+        |> required "creator" userDecoder
+        |> nullable "message" messageDecoder
+
+
+messageDecoder : Decoder Message
+messageDecoder =
+    decode Message
+        |> required "id" Uuid.decoder
+        |> required "body" Decode.string
+
+
+identityDecoder : String -> Decoder a -> Decoder a
+identityDecoder key decoder =
     decode identity
-        |> required "emoji" (Decode.list emojiDecoder)
+        |> required key decoder
 
 
 nullable : String -> Decoder a -> Decoder (Maybe a -> b) -> Decoder b
@@ -68,11 +93,15 @@ nullableAt path decoder =
     optionalAt path (Decode.maybe decoder) Nothing
 
 
-userDetailsDecoder : Decoder UserModel
-userDetailsDecoder =
+userDecoder : Decoder UserModel
+userDecoder =
     decode UserModel
-        |> requiredAt [ "user", "id" ] Uuid.decoder
-        |> requiredAt [ "user", "email" ] Decode.string
+        |> required "id" Uuid.decoder
+        |> required "email" Decode.string
+        |> required "first_name" Decode.string
+        |> required "last_name" Decode.string
+        |> nullable "avatar_url" Decode.string
+        |> required "handle" Decode.string
 
 
 workspaceDecoder : Decoder Workspace
@@ -82,9 +111,3 @@ workspaceDecoder =
         |> required "handle" Decode.string
         |> nullable "description" Decode.string
         |> required "channels" (Decode.list channelDecoder)
-
-
-workspaceListDecoder : Decoder (List Workspace)
-workspaceListDecoder =
-    decode identity
-        |> required "workspaces" (Decode.list workspaceDecoder)

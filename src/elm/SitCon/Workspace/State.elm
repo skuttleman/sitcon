@@ -2,6 +2,7 @@ module SitCon.Workspace.State exposing (init, subs, update)
 
 import Msgs exposing (Msg(..))
 import Navigation exposing (Location)
+import RemoteData exposing (RemoteData(..))
 import Shared.Utils exposing (consMaybe, maybeLift, twople, when)
 import SitCon.Global.IO exposing (fetchChannelMessages)
 import SitCon.Global.Models exposing (Channel, Page(..), Workspace)
@@ -10,7 +11,7 @@ import SitCon.Workspace.Models exposing (WorkspaceModel)
 
 init : Location -> ( WorkspaceModel, Cmd Msg )
 init location =
-    ( { active = Nothing }, Cmd.none )
+    ( { active = Nothing, entries = Loading }, Cmd.none )
 
 
 subs : WorkspaceModel -> Sub Msg
@@ -103,6 +104,9 @@ update msg model =
                 |> setCurrentWorkspace workspaces page
                 |> setCurrentChannel page
                 |> withCmds model
+
+        MessagesOnRecieve entries ->
+            ( { model | entries = entries }, Cmd.none )
 
         _ ->
             ( model, Cmd.none )

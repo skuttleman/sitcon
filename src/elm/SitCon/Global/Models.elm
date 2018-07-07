@@ -50,4 +50,8 @@ type alias UserForm =
 type alias UserModel =
     { id : Uuid
     , email : String
+    , firstName : String
+    , lastName : String
+    , avatarUrl : Maybe String
+    , handle : String
     }
