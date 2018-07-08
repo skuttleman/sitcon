@@ -1,0 +1,21 @@
+.entries {
+  .entry-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    margin-bottom: $section-padding;
+
+    & > :not(:last-child) {
+      margin-right: $section-padding;
+    }
+
+    .entry-header {
+      display: flex;
+      flex-direction: row;
+
+      .person {
+        margin-right: $section-padding;
+      }
+    }
+  }
+}

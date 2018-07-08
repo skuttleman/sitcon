@@ -9,6 +9,7 @@ module Shared.Utils
         , maybeBool
         , maybeLift
         , maybePreventDefault
+        , partitionBy
         , prevent
         , spyTap
         , succeedOr
@@ -90,6 +91,26 @@ maybePreventDefault msg preventDefault =
 
         False ->
             Decode.fail "Normal link"
+
+
+partitionBy : (a -> a -> Bool) -> List a -> List (List a)
+partitionBy f =
+    List.foldr
+        (\next acc ->
+            case acc of
+                [] ->
+                    [ [ next ] ]
+
+                [] :: more ->
+                    [ next ] :: more
+
+                (head :: tail) :: more ->
+                    if f head next then
+                        (next :: head :: tail) :: more
+                    else
+                        [ next ] :: (head :: tail) :: more
+        )
+        []
 
 
 prevent : msg -> Attribute msg

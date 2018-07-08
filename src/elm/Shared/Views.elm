@@ -51,6 +51,12 @@ maybe input =
     possibly (always input) ()
 
 
+person : { a | firstName : String, lastName : String, handle : String } -> Html msg
+person { firstName, lastName, handle } =
+    div [ class "person" ]
+        [ text <| "@" ++ handle ]
+
+
 success : RemoteData.WebData a -> (a -> Html msg) -> Html msg
 success =
     possibly webDataToMaybe

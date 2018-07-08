@@ -3,11 +3,12 @@ module SitCon.Workspace.Models exposing (Entry, Message, WorkspaceModel)
 import RemoteData exposing (WebData)
 import SitCon.Global.Models exposing (Channel, UserModel, Workspace)
 import Uuid exposing (Uuid)
+import Time.DateTime exposing (DateTime)
 
 
 type alias Entry =
     { id : Uuid
-    , createdAt : String
+    , createdAt : DateTime
     , creator : UserModel
     , message : Maybe Message
     }

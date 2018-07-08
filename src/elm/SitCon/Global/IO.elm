@@ -6,6 +6,8 @@ import Msgs exposing (Msg(..))
 import SitCon.Global.Models exposing (Channel, Emoji, UserModel, Workspace)
 import SitCon.Workspace.Models exposing (Entry, Message)
 import Shared.Utils exposing (fetch)
+import Time.Iso8601 exposing (toDateTime)
+import Time.DateTime exposing (DateTime)
 import Uuid
 
 
@@ -53,6 +55,20 @@ channelDecoder =
         |> required "private" Decode.bool
 
 
+dateDecoder : Decoder DateTime
+dateDecoder =
+    Decode.string
+        |> Decode.andThen
+            (\s ->
+                case toDateTime s of
+                    Ok dateTime ->
+                        Decode.succeed dateTime
+
+                    Err msg ->
+                        Decode.fail (toString msg)
+            )
+
+
 emojiDecoder : Decoder Emoji
 emojiDecoder =
     decode Emoji
@@ -65,7 +81,7 @@ entryDecoder : Decoder Entry
 entryDecoder =
     decode Entry
         |> required "id" Uuid.decoder
-        |> required "created_at" Decode.string
+        |> required "created_at" dateDecoder
         |> required "creator" userDecoder
         |> nullable "message" messageDecoder
 

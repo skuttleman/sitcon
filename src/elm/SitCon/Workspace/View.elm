@@ -1,23 +1,34 @@
 module SitCon.Workspace.View exposing (root)
 
-import Html exposing (Html, div, li, text, ul)
-import Html.Attributes exposing (class)
+import Html exposing (Html, div, img, li, text, ul)
+import Html.Attributes exposing (class, src)
 import Msgs exposing (Msg(..))
 import RemoteData exposing (WebData)
-import Shared.Views exposing (success)
+import Shared.Views exposing (maybe, person, success)
 import SitCon.Global.Models exposing (Channel, GlobalModel, Workspace)
 import SitCon.Workspace.Models exposing (Entry, WorkspaceModel)
+import Time.Iso8601 exposing (fromDateTime)
+
+
+entryItem : Entry -> Html msg
+entryItem { message, creator, createdAt } =
+    li [ class "entry-item" ]
+        [ div [ class "avatar" ]
+            [ img [ src <| Maybe.withDefault "https://picsum.photos/50" creator.avatarUrl ] [] ]
+        , div [ class "entry" ]
+            [ div [ class "entry-header" ] [ person creator, text (fromDateTime createdAt) ]
+            , maybe message (.body >> text >> List.singleton >> div [])
+            ]
+        ]
 
 
 entriesRoot : List Entry -> Html msg
 entriesRoot entries =
     div [ class "entries-wrapper" ]
-        [ ul [ class "entries" ]
-            (entries
-                |> List.map (.message >> Maybe.map .body)
-                |> List.filterMap identity
-                |> List.map (text >> List.singleton >> li [ class "entry" ])
-            )
+        [ ul [ class "entries" ] <|
+            List.map
+                entryItem
+                entries
         ]
 
 
